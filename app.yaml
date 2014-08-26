@@ -4,6 +4,10 @@ runtime: python27
 api_version: 1
 threadsafe: true
 
+libraries:
+- name: webapp2
+  version: latest
+
 handlers:
 - url: /.*
-  script: helloworld.application
+  script: guestbook.application
