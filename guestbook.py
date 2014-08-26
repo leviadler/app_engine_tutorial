@@ -67,10 +67,20 @@ class MainPage(webapp2.RequestHandler):
         
 class Guestbook(webapp2.RequestHandler):
     def post(self):
-        self.response.write('<html><body>You wrote:<pre>')
-        self.response.write(cgi.escape(self.request.get('content')))
-        self.response.write('</pre></body></html>')
-
+        guestbook_name = self.request.get('guestbook_name', DEFAULT_GUESTBOOK_NAME)
+        
+        greeting = Greeting(parent=guestbook_key(guestbook_name))
+        
+        if users.get_current_user():
+            greeting.author = users.get_current_user()
+        
+        greeting.content = self.request.get('content')
+        greeting.put()
+        
+        query_params = {'guestbook_name' : guestbook_name}
+        self.redirect('/?' + urllib.urlencode(query_params))
+            
+        
 application = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/sign', Guestbook),
